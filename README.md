@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/SirLovi/Scraper_23-5KB/workflows/Build%20and%20test/badge.svg)](https://github.com/SirLovi/Scraper_23-5KB/actions)
+[![Actions Status](https://github.com/SirLovi/Scraper_23-5KB/workflows/CodeQL/badge.svg)](https://github.com/SirLovi/Scraper_23-5KB/actions)
 
 # Scraper_23-5KB
 
