@@ -1,11 +1,17 @@
 import asyncio
-import pyppeteer
+from bs4 import BeautifulSoup
+from pyppeteer import *
+import os
 
 
 ################ MAIN ################
 
-def main():
-    return 0
+async def main():
+    browser = await launch()
+    page = await browser.newPage()
+    await page.goto('https://intranet.unob.cz/prehledy/Stranky/Studenti.aspx')
+    await page.screenshot({'path': 'outputs/example.png'})
+    await browser.close()
 
 if __name__ == "__main__":
-    main()
+    asyncio.get_event_loop().run_until_complete(main())
