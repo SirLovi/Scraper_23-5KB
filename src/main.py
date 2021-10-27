@@ -13,16 +13,19 @@ import json
 
 async def main():
 
-    with open('src/loginConfig.json', 'r') as f: # open the file in `path` for reading
+    with open('src/loginConfig_EXAMPLE.json', 'r') as f: # open the file in `path` for reading
         content = f.read()
         loginConfig = json.loads(content) # read the file as a dictionary into the config variable
 
 
-    browser = await launch(headless=True, userDataDir='./userdata',args=['--disable-infobars'])
+    browser = await launch(headless=False, userDataDir='./userdata',args=['--disable-infobars'])
     page = await browser.newPage()
     await page.goto('https://intranet.unob.cz/prehledy/Stranky/StudijniSkupiny.aspx')
-    await page.type('[id=userNameInput]', loginConfig.username)
-    await page.type('[id=passwordInput]', loginConfig.password)
+    await page.type('[id=userNameInput]', loginConfig.get('username'))
+    await page.type('[id=passwordInput]', loginConfig.get('password'))
+
+    await page.keyboard.press('Enter')
+    await page.waitForNavigation()
     await page.goto('https://intranet.unob.cz/prehledy/SitePages/stskupiny2.aspx?hr=9101010701')
     await page.screenshot({'path': 'outputs/example.png'})
     
