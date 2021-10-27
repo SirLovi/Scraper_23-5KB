@@ -13,9 +13,13 @@ import json
 
 async def main():
 
-    with open('src/loginConfig.json', 'r') as f: # open the file in `path` for reading
+    # RENAME "loginConfig_EXAMPLE.json" TO "loginConfig.json" FOR THE SCRIPT TO WORK CORRECTLY!!
+    # "loginConfig.json" is ignored by GIT so your private login info is not shared
+    # YOU DON'T WANT YOUR LOGIN INFO ON GITHUB!
+    
+    with open('src/loginConfig.json', 'r') as f:
         content = f.read()
-        loginConfig = json.loads(content) # read the file as a dictionary into the config variable
+        loginConfig = json.loads(content)
 
 
     browser = await launch(headless=False, userDataDir='./userdata',args=['--disable-infobars','--incognito'])
