@@ -16,8 +16,8 @@ async def main():
     # RENAME "loginConfig_EXAMPLE.json" TO "loginConfig.json" FOR THE SCRIPT TO WORK CORRECTLY!!
     # "loginConfig.json" is ignored by GIT so your private login info is not shared
     # YOU DON'T WANT YOUR LOGIN INFO ON GITHUB!
-    
-    with open('src/loginConfig.json', 'r') as f:
+
+    with open('src/loginConfig_SECRET.json', 'r') as f:
         content = f.read()
         loginConfig = json.loads(content)
 

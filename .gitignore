@@ -132,3 +132,4 @@ dmypy.json
 
 userdata/
 loginConfig.json
+loginConfig_SECRET.json
