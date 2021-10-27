@@ -8,7 +8,7 @@ Scrapes IS UO using pyppeteer library.
 
 - Sběr dat z IS UO přes HTML. Vytvoření aplikace (založené na knihovně pypeteer) pro sběr dat a jejich formalizace do JSON struktury učitelé, katedry a fakulty (portál VaV, ), studenti a studijní skupiny, (https://intranet.unob.cz/prehledy/Stranky/Studenti.aspx ), struktury studijní programy, předměty (https://apl.unob.cz/Akreditace2017/StudijniProgram), učebny (místnosti).
 
-### Timetable
+## Timetable
 
 ```
  1. 11. 2021   |   Zveřejnění harmonogramu prací na projektu
@@ -20,7 +20,7 @@ Scrapes IS UO using pyppeteer library.
 18.  3. 2022   |   Konec zkouškového období
 ```
 
-### Conditions
+## Conditions
 
 * [x] Průběžné ukládání verzí na public úložišti Github s licencí MIT, taktéž finální verze (viz harmonogram).
 * [ ] WEB Root API či UI je konfigurovatelný.
