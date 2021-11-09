@@ -3,13 +3,63 @@ from bs4 import BeautifulSoup
 from pyppeteer import *
 import os
 import json
+import pandas as pd
 
 
 ################ UTILITY FUNCTIONS ################
 
+URL = 'https://intranet.unob.cz/prehledy/Stranky/StudijniSkupiny.aspx'
+
+async def get_page(browser, url, selector):
+    """Return a page after waiting for the given selector"""
+    page = await browser.newPage()
+    await page.goto(url)
+    await page.waitForSelector(selector)
+    return page
+
+async def get_urls(browser):
+    """Return the total number of pages available"""
+    page = await get_page(browser, URL.format(0), 'div.ms-Help-PanelContainer')
+    urls = await page.evaluate('''
+        () => {
+            const links = document.querySelectorAll('ctl00_PlaceHolderMain_GridView1 a')
+            const urls = Array.from(links).map(link => link.href)
+            return urls
+        }
+    ''')
+
+async def get_num_pages(browser):
+    """Return the total number of pages available"""
+    page = await get_page(browser, URL.format(0), 'div.ms-Help-PanelContainer')
+    num_pages = await page.querySelectorEval(
+        'div.ng-isolate-scope',
+        '(element) => element.getAttribute("data-num-pages")')
+    return int(num_pages)
+
+
+async def get_table(browser, page_nb):
+    """Return the table from the given page number as a pandas dataframe"""
+    print(f'Get table from page {page_nb}')
+    page = await get_page(browser, URL.format(page_nb), 'td.res-startNo')
+    table = await page.querySelectorEval('table', '(element) => element.outerHTML')
+    return pd.read_html(table)[0]
+
+
+async def get_results():
+    """Return all the results as a pandas dataframe"""
+    browser = await launch()
+    num_pages = await get_num_pages(browser)
+    print(f'Number of pages: {num_pages}')
+    # Python 3.6 asynchronous comprehensions! Nice!
+    dfs = [await get_table(browser, page_nb) for page_nb in range(0, num_pages)]
+    await browser.close()
+    df = pd.concat(dfs, ignore_index=True)
+    return df
 
 
 ################ MAIN ################
+
+width, height = 1440, 900
 
 async def main():
 
@@ -22,10 +72,11 @@ async def main():
         loginConfig = json.loads(content)
 
 
-    browser = await launch(headless=False, userDataDir='./userdata',args=['--disable-infobars','--incognito'])
+    browser = await launch(headless=False, userDataDir='./userdata',args=['--disable-infobars','--incognito',f'--window-size={width},{height}'])
     context = await browser.createIncognitoBrowserContext()
     page = await context.newPage()
 
+    await page.setViewport({'width': width, 'height': height})
     await page.goto('https://intranet.unob.cz/prehledy/Stranky/StudijniSkupiny.aspx')
 
     await page.type('[id=userNameInput]', loginConfig.get('username'))
