@@ -7,6 +7,7 @@ import pandas as pd
 from pathlib import Path
 import re
 import urllib.request
+import requests
 
 
 ################ UTILITY FUNCTIONS ################
@@ -14,7 +15,7 @@ import urllib.request
 DYNMADO = 'https://apl.unob.cz/dymado/odata/'
 
 
-async def loadJSONPage(link):
+def loadJSONPage(link):
     with urllib.request.urlopen(link) as url:
         data = json.loads(url.read().decode())
         print(data)
@@ -35,22 +36,41 @@ async def main():
         content = f.read()
         loginConfig = json.loads(content)
 
+    """
     browser = await launch(headless=False, userDataDir='./userdata', args=['--disable-infobars', '--incognito', f'--window-size={width},{height}'])
     context = await browser.createIncognitoBrowserContext()
     page = await context.newPage()
+    """
+
+    browser = await launch(headless=False, userDataDir='./userdata', args=['--disable-infobars', f'--window-size={width},{height}'])
+    page = await browser.newPage()
 
     await page.setViewport({'width': width, 'height': height})
-    # await page.goto(DYNMADO)
-    await page.goto('https://intranet.unob.cz/prehledy/Stranky/StudijniSkupiny.aspx')
+    await page.goto(DYNMADO + "Stud_skupiny")
 
-    await page.type('[id=userNameInput]', loginConfig.get('username'))
-    await page.type('[id=passwordInput]', loginConfig.get('password'))
+    await page.type('[id=Username]', loginConfig.get('username'))
+    await page.type('[id=Password]', loginConfig.get('password'))
     await page.keyboard.press('Enter')
+
+    await page.waitForNavigation()
     await page.waitForNavigation()
 
-    await loadJSONPage(DYNMADO + "Stud_skupiny")
+    # innerText = await page.content()
 
-    await page.screenshot({'path': 'outputs/example.png'})
+    innerText = await page.evaluate('''() =>  {
+            return document.querySelector("body").innerText
+        }
+    ''')
+
+    #loadJSONPage(DYNMADO + "Stud_skupiny")
+
+    # await page.screenshot({'path': 'outputs/example.png'})
+
+    #r = requests.get('https://apl.unob.cz/dymado/odata/Stud_skupiny')
+
+    print(innerText)
+
+    # print(r.json())
 
     await browser.close()
 
