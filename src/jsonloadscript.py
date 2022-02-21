@@ -8,21 +8,37 @@ from pathlib import Path
 import re
 import urllib.request
 import requests
-import objectpath
-from jsonAnalyze import Analyze
 
 
 ################ UTILITY FUNCTIONS ################
 
 DYNMADO = 'https://apl.unob.cz/dymado/odata/'
 
+def data(data):
+    text = data
+    return text
+
 
 def loadJSONPage(link):
     with urllib.request.urlopen(link) as url:
         data = json.loads(url.read().decode())
-        json.dumps(data)
+        print(data)
 
+async def Analyze(data):
+    value = data["value"]
+    result = {"kod" : [], "zkratka" : [], "rok_nast" : [], "generovany_nazev" : []}
+    for item in enumerate(value):
+        result["kod"].append(item["kod"])
+        result["zkratka"].append(item["zkratka"])
+        result["rok_nast"].append(item["rok_nast"])
+        result["generovany_nazev"].append(item["generovany_nazev"])
+    return result
 
+async def saveJson(data):
+    jsonData = Analyze(data)
+    with open("outputs/jsondata.json", "w", encoding = "utf8") as f:
+        json.dump(jsonData, f, indent=2)
+    pass
 ################ MAIN ################
 
 width, height = 1440, 900
@@ -60,32 +76,23 @@ async def main():
     # innerText = await page.content()
 
     innerText = await page.evaluate('''() =>  {
-            return document.querySelector("value").innerText
+            return document.querySelector("body").innerText
         }
     ''')
+
+    Analyze(innerText)
+    saveJson(Analyze(innerText))
 
     #loadJSONPage(DYNMADO + "Stud_skupiny")
 
     # await page.screenshot({'path': 'outputs/example.png'})
 
     #r = requests.get('https://apl.unob.cz/dymado/odata/Stud_skupiny')
-    
-    
-    with open('outputs/outputRaw.json', 'w') as outfile:
-        outfile.write(innerText)
 
-    json.dump(Analyze(outfile))
-    """
-    print(outfile[0])
+    print(innerText)
+
     # print(r.json())
-    
-    with open('outputs/outputRaw.json', 'r') as f:
-        content = json.loads(f)
-        keyval = 5
-        if keyval in content:
-            with open('outputs/test.json', 'w') as outfile:
-                outfile.write(content[keyval])
-    """
+
     await browser.close()
 
 if __name__ == "__main__":
