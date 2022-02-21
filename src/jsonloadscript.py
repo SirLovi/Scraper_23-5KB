@@ -8,6 +8,8 @@ from pathlib import Path
 import re
 import urllib.request
 import requests
+import objectpath
+from jsonAnalyze import Analyze
 
 
 ################ UTILITY FUNCTIONS ################
@@ -18,7 +20,7 @@ DYNMADO = 'https://apl.unob.cz/dymado/odata/'
 def loadJSONPage(link):
     with urllib.request.urlopen(link) as url:
         data = json.loads(url.read().decode())
-        print(data)
+        json.dumps(data)
 
 
 ################ MAIN ################
@@ -58,7 +60,7 @@ async def main():
     # innerText = await page.content()
 
     innerText = await page.evaluate('''() =>  {
-            return document.querySelector("body").innerText
+            return document.querySelector("value").innerText
         }
     ''')
 
@@ -67,11 +69,23 @@ async def main():
     # await page.screenshot({'path': 'outputs/example.png'})
 
     #r = requests.get('https://apl.unob.cz/dymado/odata/Stud_skupiny')
+    
+    
+    with open('outputs/outputRaw.json', 'w') as outfile:
+        outfile.write(innerText)
 
-    print(innerText)
-
+    json.dump(Analyze(outfile))
+    """
+    print(outfile[0])
     # print(r.json())
-
+    
+    with open('outputs/outputRaw.json', 'r') as f:
+        content = json.loads(f)
+        keyval = 5
+        if keyval in content:
+            with open('outputs/test.json', 'w') as outfile:
+                outfile.write(content[keyval])
+    """
     await browser.close()
 
 if __name__ == "__main__":

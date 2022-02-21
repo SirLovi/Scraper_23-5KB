@@ -284,7 +284,7 @@ async def get_page(browser, url, selector):
 
 async def get_urls(browser):
     """Return the total number of pages available"""
-    page = await get_page(browser, URL.format(0), 'div.ms-Help-PanelContainer')
+    page = await get_page(browser, URL_link.format(0), 'div.ms-Help-PanelContainer')
     urls = await page.evaluate('''
         () => {
             const links = document.querySelectorAll('ctl00_PlaceHolderMain_GridView1 a')
@@ -296,7 +296,7 @@ async def get_urls(browser):
 
 async def get_num_pages(browser):
     """Return the total number of pages available"""
-    page = await get_page(browser, URL.format(0), 'div.ms-Help-PanelContainer')
+    page = await get_page(browser, URL_link.format(0), 'div.ms-Help-PanelContainer')
     num_pages = await page.querySelectorEval(
         'div.ng-isolate-scope',
         '(element) => element.getAttribute("data-num-pages")')
@@ -306,7 +306,7 @@ async def get_num_pages(browser):
 async def get_table(browser, page_nb):
     """Return the table from the given page number as a pandas dataframe"""
     print(f'Get table from page {page_nb}')
-    page = await get_page(browser, URL.format(page_nb), 'td.res-startNo')
+    page = await get_page(browser, URL_link.format(page_nb), 'td.res-startNo')
     table = await page.querySelectorEval('table', '(element) => element.outerHTML')
     return pd.read_html(table)[0]
 
